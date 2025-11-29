@@ -134,26 +134,29 @@ def extrair_campos_crlv(pdf_file: str) -> dict:
 
     return res
 
-# ---- Loop na pasta e exportação -------------------------------------------
+# ---- Loop na pasta e impressão --------------------------------------------
 
-def processar_pdfs():
-    pdfs = sorted(glob.glob(os.path.join(PASTA, "*.pdf")))
-    if not pdfs:
-        print(f"Nenhum PDF encontrado em {PASTA!r}.")
-        return
-
+pdfs = sorted(glob.glob(os.path.join(PASTA, "*.pdf")))
+if not pdfs:
+    print(f"Nenhum PDF encontrado em {PASTA!r}.")
+else:
     resultados = []
     for pdf_file in pdfs:
         campos = extrair_campos_crlv(pdf_file)
         linha = {"arquivo": os.path.basename(pdf_file), **campos}
         resultados.append(linha)
-        print(f"{linha['arquivo']}: RENAVAM={linha['renavam']}, PLACA={linha['placa']}, ANO FABRICAÇÃO={linha['ano_fabricacao']}, ANO MODELO={linha['ano_modelo']}, MARCA/MODELO/VERSÃO={linha['marca_modelo_versao']}, COR={linha['cor_predominante']}, CHASSI={linha['teste_chassi']}")
+        print(f"{linha['arquivo']}: "
+              f"RENAVAM={linha['renavam']}, "
+              f"PLACA={linha['placa']}, "
+              f"ANO FABRICAÇÃO={linha['ano_fabricacao']}, "
+              f"ANO MODELO={linha['ano_modelo']}, "
+              f"MARCA/MODELO/VERSÃO={linha['marca_modelo_versao']}, "
+              f"COR={linha['cor_predominante']}, "
+              f"CHASSI={linha['teste_chassi']}")
 
-    df = pd.DataFrame(resultados)
-    df.to_excel("/content/resultado_crlv.xlsx", index=False)
-    df.to_csv("/content/resultado_crlv.csv", index=False, encoding="utf-8-sig")
-    print("Planilhas salvas em /content/resultado_crlv.xlsx e /content/resultado_crlv.csv")
-
-
-if __name__ == "__main__":
-    processar_pdfs()
+    # (Opcional) Salvar em Excel/CSV:
+import pandas as pd
+df = pd.DataFrame(resultados)
+df.to_excel("/content/resultado_crlv.xlsx", index=False)
+df.to_csv("/content/resultado_crlv.csv", index=False, encoding="utf-8-sig")
+print("Planilhas salvas em /content/resultado_crlv.xlsx e /content/resultado_crlv.csv")
